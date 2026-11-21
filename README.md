@@ -1,9 +1,4 @@
-# The Keeper
-
-**Winner in team entries of PyWeek 41 🎉
-Theme: Nightfall**
-Team name: [MXRV](https://pyweek.org/e/MXRV/)
----
+# The watcher
 
 ## Story
 
