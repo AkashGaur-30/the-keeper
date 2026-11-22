@@ -1,4 +1,10 @@
-# The watcher
+# The Keeper
+
+**Play in your browser:** https://akashgaur.itch.io/the-watcher
+
+THE WATCHER is a 10-day lighthouse survival management game, built with Python, Pygame CE and Pygbag, and published as a browser game on itch.io. No download or install is needed.
+
+---
 
 ## Story
 
@@ -18,31 +24,17 @@ The light was all you had. You kept it spinning.
 
 ---
 
-## Dependencies
+## How to Play (Web)
 
-- **Python 3.10+** (Enhanced edition now supports Python 3.15.2 and beyond)
-- **pygame 2.1.0 or later**
-- **pytmx**
+1. Open the game page: https://akashgaur.itch.io/the-watcher
+2. Wait for the game to finish loading. The first load can take up to a minute while the Python runtime downloads.
+3. Click inside the game window once and press any key. Browsers block audio until you interact with the page.
+4. Use the fullscreen button below the game window for the best experience.
 
-Install all dependencies with:
-
-```bash
-pip install pygame pytmx
-```
-
-> **Note:** This enhanced edition supports Python 3.10 through 3.20+. The original version limit has been removed.
-> `run_game.py` will exit with a clear error message if your Python or pygame version is incompatible.
-
----
-
-## How to Run
-
-```bash
-pip install -r requirements.txt
-python run_game.py
-```
-
-`run_game.py` checks your Python and pygame versions and exits with a clear message if anything is incompatible.
+**Browser notes**
+- Use a desktop browser such as Chrome, Edge or Firefox for best results.
+- If the screen stays grey or stuck on "Loading", hard refresh with `Ctrl + Shift + R`.
+- Save data is stored in your browser. Clearing site data for itch.io will erase your save.
 
 ---
 
@@ -51,15 +43,17 @@ python run_game.py
 | Input | Action |
 |---|---|
 | A / D or Left / Right Arrow | Move |
-| Click | Move to position |
+| Click | Move to position / interact |
 | Space / Enter | Advance dialogue |
-| F11 | Cycle display mode (Windowed / Borderless / Fullscreen) |
+| Fullscreen button (itch.io) | Toggle fullscreen in the browser |
+
+> The desktop-only `F11` display-mode cycle is not used in the web version. Use the itch.io fullscreen button instead.
 
 ---
 
 ## Gameplay
 
-The Keeper is a 10-day survival management game. Each day has two phases: day and night.
+The Watcher is a 10-day survival management game. Each day has two phases: day and night.
 
 **During the day**, a taskboard shows the jobs that need doing before nightfall. You walk through the lighthouse interior, interact with equipment, and complete a short minigame for each task. The tasks are mundane at first -- replace frayed cables, clean the lens, vent engine pressure -- but grow heavier as the days pass. On Day 5 you assist the scientist on the beach. On Day 7 you board up the lower doors. On Day 9 you crank the light by hand because the motor is failing.
 
@@ -96,13 +90,83 @@ Two characters visit the island across the 10 days. Their dialogue reflects how 
 
 ---
 
+## Web Version: Technical Notes
+
+The web version is the Python game compiled to run in the browser with [Pygbag](https://pygame-web.github.io/) (WebAssembly).
+
+- The game loop is asynchronous (`asyncio`), as Pygbag requires.
+- The browser build is generated into `build/web/` and uploaded to itch.io as an HTML5 game.
+- itch.io limits browser ZIPs to 1,000 files. Only the contents of `build/web/` are uploaded, never the whole project, virtual environments or `.git`.
+
+### Dependencies (for developers)
+
+- **Python 3.12** (used for the web build)
+- **pygame-ce** (Pygame Community Edition)
+- **pytmx**
+- **pygbag** (web build tool)
+
+```bash
+pip install -r requirements.txt
+pip install pygbag
+```
+
+### Run locally in a browser
+
+```powershell
+python -m pygbag --build .
+```
+
+Pygbag 0.9.3 generates an `index.html` that can reference a broken BrowserFS URL. After every build, replace this URL in `build/web/index.html`:
+
+```
+https://pygame-web.github.io/cdn/0.9.3//browserfs.min.js
+```
+
+with:
+
+```
+https://cdn.jsdelivr.net/npm/browserfs@1.4.3/dist/browserfs.min.js
+```
+
+Then serve the build folder and open it in a fresh or Incognito Chrome window:
+
+```powershell
+cd build/web
+python -m http.server 8765
+```
+
+Open `http://127.0.0.1:8765`. Do not run `pygbag --port 8765 .` after applying the fix, because that rebuilds the game and overwrites it.
+
+### Package and publish on itch.io
+
+1. Build the game and apply the BrowserFS fix as above.
+2. Copy the contents of `build/web/` into a clean `release/itch-web/` folder.
+3. ZIP the contents so that `index.html` is at the root of the ZIP.
+4. On itch.io, upload the ZIP and tick **This file will be played in the browser**.
+5. Set the viewport to 1280 x 720 and enable the fullscreen button.
+6. Test the page as Draft or Restricted, then set Visibility to Public.
+
+### Run the desktop version (optional)
+
+The game can still be run natively for development:
+
+```bash
+python run_game.py
+```
+
+`run_game.py` checks your Python and pygame versions and exits with a clear message if anything is incompatible.
+
+---
+
 ## Project Structure
 
 ```
-The-Keeper/
-├── run_game.py              Entry point (start here)
-├── main.py                  Core display and event loop
+The-Watcher/
+├── run_game.py              Desktop entry point
+├── main.py                  Core display and event loop (async for web)
 ├── requirements.txt         Python dependencies
+├── build/web/               Generated browser build (not committed)
+├── release/                 Packaged itch.io ZIPs (not committed)
 ├── constants/
 │   ├── dialogue.py          All in-game text: opening, daily scripts, NPC lines
 │   ├── gameplay.py          Day tasks, night tasks, sky colors, interactable flavour text
@@ -157,6 +221,7 @@ The-Keeper/
 - **RudyDaBot** -- sound design and assets
 - **xodo2fast4u** -- original concept and storyline contributions
 - **omnimistic** -- assets
+- **Akash Gaur** -- web conversion (Pygbag) and itch.io release
 
 ---
 
