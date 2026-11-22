@@ -1,6 +1,6 @@
 # The Keeper
 
-**Play in your browser:** https://akashgaur.itch.io/the-watcher
+**Play in your browser:** https://akashgaur.itch.io/thekeeper
 
 THE WATCHER is a 10-day lighthouse survival management game, built with Python, Pygame CE and Pygbag, and published as a browser game on itch.io. No download or install is needed.
 
